@@ -102,7 +102,5 @@ class FuzzyTsukamotoTest extends TestCase
         
         $result = $tsukamoto->calculated($ruleBuilder);
         $this->assertEquals(470000, round($result, -3));
-     
-        echo $ruleBuilder;
     }
 }
