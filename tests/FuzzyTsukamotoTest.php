@@ -25,8 +25,8 @@ class FuzzyTsukamotoTest extends TestCase
     {
         $value = 3000000;
         $kurvaGaji = (new CurveBuilder())
-                ->addCurve(FuzzyTsukamoto::KEY_MIN, (new DownCurve($value))->setMin(2000000)->setMax(4000000))
-                ->addCurve(FuzzyTsukamoto::KEY_MAX, (new UpCurve($value))->setMin(3000000)->setMax(5000000));
+                ->addCurve('sedikit', (new DownCurve($value))->setMin(2000000)->setMax(4000000))
+                ->addCurve('banyak', (new UpCurve($value))->setMin(3000000)->setMax(5000000));
         
         $this->assertEquals(2, count($kurvaGaji->getCurves()));
         
@@ -37,9 +37,9 @@ class FuzzyTsukamotoTest extends TestCase
     {
         $value = 4;
         $kurvaMasaKerja = (new CurveBuilder())
-                ->addCurve(FuzzyTsukamoto::KEY_MIN, (new DownCurve($value))->setMin(2)->setMax(5))
-                ->addCurve(FuzzyTsukamoto::KEY_MIDDLE, (new TriagleCurve($value))->setMedium(5)->setMin(3)->setMax(7))
-                ->addCurve(FuzzyTsukamoto::KEY_MAX, (new UpCurve($value))->setMin(5)->setMax(8));
+                ->addCurve('baru', (new DownCurve($value))->setMin(2)->setMax(5))
+                ->addCurve('sedang', (new TriagleCurve($value))->setMedium(5)->setMin(3)->setMax(7))
+                ->addCurve('lama', (new UpCurve($value))->setMin(5)->setMax(8));
         
         $this->assertEquals(3, count($kurvaMasaKerja->getCurves()));
         
@@ -49,8 +49,8 @@ class FuzzyTsukamotoTest extends TestCase
     public function testKurvaBonus(): CurveBuilder
     {
         $kurvaBonus = (new CurveBuilder())
-                ->addCurve(FuzzyTsukamoto::KEY_MIN, (new DownCurve())->setMin(300000)->setMax(600000))
-                ->addCurve(FuzzyTsukamoto::KEY_MAX, (new UpCurve())->setMin(300000)->setMax(600000));
+                ->addCurve('sedikit', (new DownCurve())->setMin(300000)->setMax(600000))
+                ->addCurve('banyak', (new UpCurve())->setMin(300000)->setMax(600000));
         
         $this->assertEquals(2, count($kurvaBonus->getCurves()));
         
@@ -71,58 +71,36 @@ class FuzzyTsukamotoTest extends TestCase
         
         $ruleBuilder = new RuleBuilder();
         $ruleBuilder->startWhen(1)
-                ->andWhen('kerja', FuzzyTsukamoto::KEY_MIN)
-                ->andWhen("gaji", FuzzyTsukamoto::KEY_MIN)
-                ->then(FuzzyTsukamoto::KEY_MIN);
+                ->andWhen('kerja', 'baru')
+                ->andWhen("gaji", 'sedikit')
+                ->then('sedikit');
         
         $ruleBuilder->startWhen(2)
-                ->andWhen('kerja', FuzzyTsukamoto::KEY_MIN)
-                ->andWhen("gaji", FuzzyTsukamoto::KEY_MAX)
-                ->then(FuzzyTsukamoto::KEY_MIN);
+                ->andWhen('kerja', 'baru')
+                ->andWhen("gaji", 'banyak')
+                ->then('sedikit');
         
         $ruleBuilder->startWhen(3)
-                ->andWhen('kerja', FuzzyTsukamoto::KEY_MIDDLE)
-                ->andWhen("gaji", FuzzyTsukamoto::KEY_MIN)
-                ->then(FuzzyTsukamoto::KEY_MIN);
+                ->andWhen('kerja', 'sedang')
+                ->andWhen("gaji", 'sedikit')
+                ->then('sedikit');
         
         $ruleBuilder->startWhen(4)
-                ->andWhen('kerja', FuzzyTsukamoto::KEY_MIDDLE)
-                ->andWhen("gaji", FuzzyTsukamoto::KEY_MAX)
-                ->then(FuzzyTsukamoto::KEY_MAX);
+                ->andWhen('kerja', 'sedang')
+                ->andWhen("gaji", 'banyak')
+                ->then('banyak');
         
         $ruleBuilder->startWhen(5)
-                ->andWhen('kerja', FuzzyTsukamoto::KEY_MAX)
-                ->andWhen("gaji", FuzzyTsukamoto::KEY_MIN)
-                ->then(FuzzyTsukamoto::KEY_MAX);
+                ->andWhen('kerja', 'lama')
+                ->andWhen("gaji", 'sedikit')
+                ->then('banyak');
         
         $ruleBuilder->startWhen(6)
-                ->andWhen('kerja', FuzzyTsukamoto::KEY_MAX)
-                ->andWhen("gaji", FuzzyTsukamoto::KEY_MAX)
-                ->then(FuzzyTsukamoto::KEY_MAX);
+                ->andWhen('kerja', 'lama')
+                ->andWhen("gaji", 'banyak')
+                ->then('banyak');
         
         $result = $tsukamoto->calculated($ruleBuilder);
         $this->assertEquals(470000, round($result, -3));
-        /*dump("");
-        dump("====== DATA ===");
-        dump("GAJI : Rp. 3.000.000");
-        dump("MASA KERJE: 4 Tahun");
-        dump("====== KURVA ATURAN ===");
-        foreach ($tsukamoto->getDecisionCurves() as $k => $curveBuilder) {
-            dump($k . ': ');
-            foreach ($curveBuilder->getCurves() as $key => $curve) {
-                
-                if($curve instanceof TriagleCurve) {
-                    dump(sprintf('==> %s, min: %s, medium: %s, max: %s', (string)$curve, $curve->getMin(), $curve->getMedium(), $curve->getMax()));
-                } else {
-                    dump(sprintf('==> %s, min: %s, max: %s', (string)$curve, $curve->getMin(), $curve->getMax()));
-                }
-            }
-        }
-        
-        dump("====== ATURAN =====");
-        dump((string)$ruleBuilder);
-        dump("====== HASIL ======");
-        dump("BONUS : " . $result);
-        exit;*/
     }
 }
