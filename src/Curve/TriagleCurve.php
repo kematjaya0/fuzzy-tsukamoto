@@ -23,6 +23,11 @@ class TriagleCurve extends AbstractCurve
      */
     private $medium;
     
+    public function __toString() 
+    {
+        return "TRIAGLE CURVE";
+    }
+    
     public function getMedium(): ?float 
     {
         return $this->medium;

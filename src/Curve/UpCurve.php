@@ -16,6 +16,11 @@ use Kematjaya\FuzzyTsukamoto\Exception\EmptyMaxException;
  */
 class UpCurve extends AbstractCurve implements OutputCurveInterface
 {
+    public function __toString() 
+    {
+        return "UP CURVE";
+    }
+    
     public function calculate(): float 
     {
         if (null === $this->getMin()) {

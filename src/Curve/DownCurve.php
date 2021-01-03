@@ -16,6 +16,12 @@ use Kematjaya\FuzzyTsukamoto\Exception\EmptyMaxException;
  */
 class DownCurve extends AbstractCurve implements OutputCurveInterface
 {
+    
+    public function __toString() 
+    {
+        return "DOWN CURVE";
+    }
+    
     /**
      * Calculating value
      * 

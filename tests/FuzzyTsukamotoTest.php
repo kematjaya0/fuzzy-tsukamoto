@@ -102,5 +102,27 @@ class FuzzyTsukamotoTest extends TestCase
         
         $result = $tsukamoto->calculated($ruleBuilder);
         $this->assertEquals(470000, round($result, -3));
+        /*dump("");
+        dump("====== DATA ===");
+        dump("GAJI : Rp. 3.000.000");
+        dump("MASA KERJE: 4 Tahun");
+        dump("====== KURVA ATURAN ===");
+        foreach ($tsukamoto->getDecisionCurves() as $k => $curveBuilder) {
+            dump($k . ': ');
+            foreach ($curveBuilder->getCurves() as $key => $curve) {
+                
+                if($curve instanceof TriagleCurve) {
+                    dump(sprintf('==> %s, min: %s, medium: %s, max: %s', (string)$curve, $curve->getMin(), $curve->getMedium(), $curve->getMax()));
+                } else {
+                    dump(sprintf('==> %s, min: %s, max: %s', (string)$curve, $curve->getMin(), $curve->getMax()));
+                }
+            }
+        }
+        
+        dump("====== ATURAN =====");
+        dump((string)$ruleBuilder);
+        dump("====== HASIL ======");
+        dump("BONUS : " . $result);
+        exit;*/
     }
 }
